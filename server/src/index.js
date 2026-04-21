@@ -13,8 +13,15 @@ import { isSupabasePlaceholderConfig } from "./utils/supabase.js";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
-const clientOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
-  .split(",")
+const defaultClientOrigins = [
+  "https://os-authenticator.vercel.app",
+  "http://localhost:5173"
+];
+const clientOrigins = [
+  ...defaultClientOrigins,
+  ...(process.env.CLIENT_URL || "").split(",")
+]
+  .flatMap((origin) => origin.split(","))
   .map((origin) => origin.trim())
   .filter(Boolean);
 const allowedOrigins = new Set(clientOrigins);
