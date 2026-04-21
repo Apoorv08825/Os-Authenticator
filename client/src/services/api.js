@@ -1,4 +1,5 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const API_BASE_URL =
+  import.meta.env.VITE_API_URL || "https://os-authenticator.onrender.com/api";
 
 export const apiRequest = async (path, options = {}) => {
   const token = options.token || localStorage.getItem("secure_auth_token");
