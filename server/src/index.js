@@ -15,7 +15,13 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 const clientOrigins = (process.env.CLIENT_URL || "http://localhost:5173")
   .split(",")
-  .map((origin) => origin.trim());
+  .map((origin) => origin.trim())
+  .filter(Boolean);
+const allowedOrigins = new Set(clientOrigins);
+
+if (process.env.NODE_ENV !== "production") {
+  allowedOrigins.add("http://localhost:5173");
+}
 
 app.use(
   helmet({
@@ -24,21 +30,9 @@ app.use(
 );
 
 
-const allowedOrigins = [
-  "http://localhost:5173",
-  ...(process.env.CLIENT_URL || "").split(",")
-];
-const allowedOrigins = [
-  process.env.CLIENT_URL, // your main deployed frontend
-];
-
-if (process.env.NODE_ENV !== "production") {
-  allowedOrigins.push("http://localhost:5173");
-}
-
 app.use(cors({
   origin: (origin, callback) => {
-    if (!origin || allowedOrigins.includes(origin)) {
+    if (!origin || allowedOrigins.has(origin)) {
       callback(null, true);
     } else {
       callback(new Error("Not allowed by CORS"));
